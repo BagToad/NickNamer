@@ -134,7 +134,7 @@ async def randomizeall(ctx):
         name1 = names[0]
         name2 = names[1]
         member_list = member_list + "\n" + (f"I would have set {member.name} to {name1} {name2}")
-    await ctx.send(f'found {member_list}!')
+    await ctx.send(f'This is what I would have done:{member_list}!')
 
     # name1 = name_list[random.randint(0, len(name_list) - 1)]
     # name2 = name_list[random.randint(0, len(name_list) - 1)]
