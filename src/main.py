@@ -114,7 +114,7 @@ async def get_names(ctx):
         return
     await ctx.send(f'I remember... {nick.name_list()}')
 
-@bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words - Randomize a nickname.")
+@bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words - Randomize your nickname.")
 async def randomize_me(ctx, n=2):
     name: str = nick.new_name(n)
     await ctx.send(f"Okay! I'll call you {name}!")
@@ -122,7 +122,7 @@ async def randomize_me(ctx, n=2):
     if not r:
         await ctx.send("Something happened :(")
 
-@bot.command(name="randomize", aliases=['rand'])
+@bot.command(name="randomize", aliases=['rand'], help="[randomize|rand] user num_of_words - Randomize someone's nickname")
 async def randomize(ctx, member: discord.Member, n=2):
     name: str = nick.new_name(n)
     await ctx.send(f"Okay! I'll call {member.nick} {name}!")
@@ -130,7 +130,7 @@ async def randomize(ctx, member: discord.Member, n=2):
     if not r:
         await ctx.send("Something happened :(")
 
-@bot.command(name="randomizeall", aliases=['randall'], help="[randomizeall|randall] - Randomize all names.")
+@bot.command(name="randomizeall", aliases=['randall'], help="[randomizeall|randall] num_of_words - Randomize everyone's nickname.")
 async def randomize_all(ctx, n: int=2):
     guild = ctx.guild
     member_list: str = ""
