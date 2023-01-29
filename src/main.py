@@ -46,6 +46,15 @@ class NickNamer:
     def nameList(self):
         return self.names_list
 
+    def newName(self):
+        name_list = nick.nameList()
+        if not name_list:
+            return
+        name1 = name_list[random.randint(0, len(name_list) - 1)]
+        name2 = name_list[random.randint(0, len(name_list) - 1)]
+        while name1 == name2:
+            name2 = name_list[random.randint(0, len(name_list) - 1)]
+        return [name1, name2]
 
 nick = NickNamer()
 
@@ -77,26 +86,38 @@ async def forgetall(ctx):
     nick.forgetAll()
     await ctx.send(f'Okay!')
 
-@bot.command()
-async def names(ctx):
+@bot.command(name="names")
+async def getnames(ctx):
     if not nick.nameList():
         await ctx.send(f'I remember... nothing')
         return
     await ctx.send(f'I remember... {nick.nameList()}')
 
 @bot.command(aliases=['randme'])
-async def randomizeme(ctx, member: discord.Member):
-    name_list = nick.nameList()
-    if not name_list:
-        await ctx.send('I found nothing :(')
-        return
-    name1 = name_list[random.randint(0, len(name_list) - 1)]
-    name2 = name_list[random.randint(0, len(name_list) - 1)]
-    while name1 == name2:
-        name2 = name_list[random.randint(0, len(name_list) - 1)]
-    
-    await member.edit(nick=name1+" "+name2)
+async def randomizeme(ctx):
+    names = nick.newName()
+    name1 = names[0]
+    name2 = names[1]
+    try:
+        await ctx.author.edit(nick=name1+" "+name2)
+    except discord.errors.Forbidden as err:
+        print(f"{type(err).__name__} was raised: {err}")
+        await ctx.send(f'Something happened! :(\n{err}')
+        return   
     await ctx.send(f'I found {name1} {name2}!')
+
+@bot.command(aliases=['rand'])
+async def randomize(ctx, member: discord.Member):
+    names = nick.newName()
+    name1 = names[0]
+    name2 = names[1]
+    try:
+        await member.edit(nick=name1+" "+name2)
+    except discord.errors.Forbidden as err:
+        print(f"{type(err).__name__} was raised: {err}")
+        await ctx.send(f'Something happened! :(\n{err}')
+        return   
+    await ctx.send(f'{member.mention} is now {name1} {name2}!')
 
 @bot.command(aliases=['randall'])
 async def randomizeall(ctx):
@@ -104,9 +125,16 @@ async def randomizeall(ctx):
     if not name_list:
         await ctx.send('I found nothing :(')
         return
-    guild = bot.guilds[0]
+    guild = ctx.guild
+    member_list = ""
     for member in guild.members:
-        await ctx.send(f'found {member}!')
+        if member.bot:
+            continue
+        names = nick.newName()
+        name1 = names[0]
+        name2 = names[1]
+        member_list = member_list + "\n" + (f"I would have set {member.name} to {name1} {name2}")
+    await ctx.send(f'found {member_list}!')
 
     # name1 = name_list[random.randint(0, len(name_list) - 1)]
     # name2 = name_list[random.randint(0, len(name_list) - 1)]
