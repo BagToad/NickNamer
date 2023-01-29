@@ -12,7 +12,7 @@ handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w'
 
 class NickNamer:
     """A class to handle IO and other naming operations."""
-    def __init__(self, data_file: str="./data.json"):
+    def __init__(self, data_file: str="~/data.json"):
         self.fn = data_file
         self.names_list = []
         try:
@@ -141,7 +141,7 @@ async def randomize_all(ctx, n: int=2):
         name: str = nick.new_name(n)
         member_list = member_list + "\n" + (f"I would have set {member.name} to {name}")
     await ctx.send(f'found {member_list}!')
-    
+
 @bot.command(name="reloadnames", aliases=['rl'])
 async def reload_names(ctx):
     nick.load()
