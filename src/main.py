@@ -107,14 +107,14 @@ async def forget_all(ctx):
     nick.forget_all()
     await ctx.send('Okay!')
 
-@bot.command(name="names", aliases=["words", "n"])
+@bot.command(name="names", aliases=["words", "n"], help="[names|words|n]")
 async def get_names(ctx):
     if not nick.name_list():
         await ctx.send('I remember... nothing')
         return
     await ctx.send(f'I remember... {nick.name_list()}')
 
-@bot.command(name="randomizeme", aliases=['randme'])
+@bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words")
 async def randomize_me(ctx, n=2):
     name: str = nick.new_name(n)
     await ctx.send(f"Okay! I'll call you {name}!")
