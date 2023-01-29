@@ -91,13 +91,13 @@ async def on_ready():
 
 @bot.command(aliases=['remember'])
 # @commands.is_owner()
-async def rem(ctx, name):
+async def rem(ctx, name: str):
     nick.rem(name)
     await ctx.send(f'Okay! I will remember {name}!')
 
 @bot.command()
 # @commands.is_owner()
-async def forget(ctx, name):
+async def forget(ctx, name: str):
     nick.forget(name)
     await ctx.send(f'Okay! I will forget {name}!')
 
