@@ -22,9 +22,9 @@ jobs:
           API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
           ls -al
-          if [ -e ./namer.pid ]; then
-            echo "killing $(cat ./namer.pid)!"
-            kill $(cat ./namer.pid)
+          if [ -e /tmp/namer.pid ]; then
+            echo "killing $(cat /tmp/namer.pid)!"
+            kill $(cat /tmp/namer.pid)
           fi
           RUNNER_TRACKING_ID=""
           python3 ./src/main.py &
