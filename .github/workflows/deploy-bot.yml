@@ -22,6 +22,7 @@ jobs:
           API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
           if [ -e namer.pid ]; then
+            echo "killing $(cat namer.pid)!"
             kill $(cat namer.pid)
           fi
           RUNNER_TRACKING_ID=""
