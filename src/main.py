@@ -2,9 +2,13 @@ import os
 import discord
 import json
 import random
+import logging
 from discord.ext import commands
 
 CLIENT_TOKEN = os.getenv('API_TOKEN')
+
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
 
 class NickNamer:
     def __init__(self):
@@ -115,4 +119,4 @@ async def randomizeall(ctx):
     #     await ctx.send(f"I can't touch {member.mention} because {err=}  :(")
     # except discord.ext.commands.errors.MemberNotFound as err:
     #     await ctx.send(f"I can't touch {member.mention} because {err=}  :(")
-bot.run(CLIENT_TOKEN)
+bot.run(CLIENT_TOKEN, log_handler=handler)
