@@ -18,5 +18,5 @@ jobs:
         python -m pip install --upgrade pip 
         python3 -m pip install -U discord.py
     - name: Run NickNamer
-			run: |
-			RUNNER_TRACKING_ID="" && python3 ./src/main.py &
+      run: |
+	RUNNER_TRACKING_ID="" && python3 ./src/main.py &
