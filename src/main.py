@@ -12,7 +12,7 @@ handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w'
 
 class NickNamer:
     """A class to handle IO and other naming operations."""
-    def __init__(self, data_file: str="~/data.json"):
+    def __init__(self, data_file: str=f"{os.path.expanduser('~')}/data.json"):
         self.fn = data_file
         self.names_list = []
         try:
