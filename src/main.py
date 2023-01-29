@@ -89,32 +89,32 @@ nick = NickNamer()
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-@bot.command(name="remember", aliases=['rem'], help="[remember|rem] word_to_remember")
+@bot.command(name="remember", aliases=['rem'], help="[remember|rem] word_to_remember - Remember a word.")
 # @commands.is_owner()
 async def remember(ctx, name: str):
     nick.rem(name)
     await ctx.send(f'Okay! I will remember {name}!')
 
-@bot.command(name="forget", help="[forget] word_to_forget")
+@bot.command(name="forget", help="[forget] word_to_forget - Forget a word.")
 # @commands.is_owner()
 async def forget(ctx, name: str):
     nick.forget(name)
     await ctx.send(f'Okay! I will forget {name}!')
 
-@bot.command(name="forgetall", help="[forgetall]")
+@bot.command(name="forgetall", help="[forgetall] - Forget all names.")
 # @commands.is_owner()
 async def forget_all(ctx):
     nick.forget_all()
     await ctx.send('Okay!')
 
-@bot.command(name="names", aliases=["words", "n"], help="[names|words|n]")
+@bot.command(name="names", aliases=["words", "n"], help="[names|words|n] - List all words remembered.")
 async def get_names(ctx):
     if not nick.name_list():
         await ctx.send('I remember... nothing')
         return
     await ctx.send(f'I remember... {nick.name_list()}')
 
-@bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words")
+@bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words - Randomize a nickname.")
 async def randomize_me(ctx, n=2):
     name: str = nick.new_name(n)
     await ctx.send(f"Okay! I'll call you {name}!")
@@ -130,7 +130,7 @@ async def randomize(ctx, member: discord.Member, n=2):
     if not r:
         await ctx.send("Something happened :(")
 
-@bot.command(name="randomizeall", aliases=['randall'])
+@bot.command(name="randomizeall", aliases=['randall'], help="[randomizeall|randall] - Randomize all names.")
 async def randomize_all(ctx, n: int=2):
     guild = ctx.guild
     member_list: str = ""
@@ -141,7 +141,7 @@ async def randomize_all(ctx, n: int=2):
         member_list = member_list + "\n" + (f"I would have set {member.name} to {name}")
     await ctx.send(f'found {member_list}!')
 
-@bot.command(name="reloadnames", aliases=['rl'], help="[reloadnames|rl]")
+@bot.command(name="reloadnames", aliases=['rl'], help="[reloadnames|rl] - Re-read data from disk.")
 async def reload_names(ctx):
     nick.load()
 
