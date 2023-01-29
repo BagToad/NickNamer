@@ -93,7 +93,7 @@ async def on_ready():
 # @commands.is_owner()
 async def remember(ctx, *name: str):
     for w in name:
-        nick.rem(name)
+        nick.rem(w)
     await ctx.send(f'Okay! I will remember {name}!')
 
 @bot.command(name="forget", help="[forget] word_to_forget - Forget a word.")
