@@ -94,8 +94,9 @@ async def randomizeme(ctx, member: discord.Member):
     name2 = name_list[random.randint(0, len(name_list) - 1)]
     while name1 == name2:
         name2 = name_list[random.randint(0, len(name_list) - 1)]
-        await member.edit(nick=name1+" "+name2)
-        await ctx.send(f'I found {name1} {name2}!')
+    
+    await member.edit(nick=name1+" "+name2)
+    await ctx.send(f'I found {name1} {name2}!')
 
 @bot.command(aliases=['randall'])
 async def randomizeall(ctx):
