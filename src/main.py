@@ -116,7 +116,8 @@ async def get_names(ctx):
     if not nick.name_list():
         await ctx.send('I remember... nothing')
         return
-    await ctx.send(f'I remember... {nick.name_list()}')
+    s :str = " "
+    await ctx.send(f'I remember... {s.join(nick.name_list())}')
 
 @bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words - Randomize your nickname.")
 async def randomize_me(ctx, n=2):
