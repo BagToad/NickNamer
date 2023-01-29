@@ -21,4 +21,5 @@ jobs:
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
         run: |
+          kill $(jobs -p)
           RUNNER_TRACKING_ID="" && python3 ./src/main.py &
