@@ -89,19 +89,19 @@ nick = NickNamer()
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-@bot.command(aliases=['remember'])
+@bot.command(name="remember", aliases=['rem'], help="[remember|rem] word_to_remember")
 # @commands.is_owner()
-async def rem(ctx, name: str):
+async def remember(ctx, name: str):
     nick.rem(name)
     await ctx.send(f'Okay! I will remember {name}!')
 
-@bot.command()
+@bot.command(name="forget", help="[forget] word_to_forget")
 # @commands.is_owner()
 async def forget(ctx, name: str):
     nick.forget(name)
     await ctx.send(f'Okay! I will forget {name}!')
 
-@bot.command(name="forgetall")
+@bot.command(name="forgetall", help="[forgetall]")
 # @commands.is_owner()
 async def forget_all(ctx):
     nick.forget_all()
@@ -122,8 +122,7 @@ async def randomize_me(ctx, n=2):
     if not r:
         await ctx.send("Something happened :(")
 
-
-@bot.command(aliases=['rand'])
+@bot.command(name="randomize", aliases=['rand'])
 async def randomize(ctx, member: discord.Member, n=2):
     name: str = nick.new_name(n)
     await ctx.send(f"Okay! I'll call {member.nick} {name}!")
@@ -142,7 +141,7 @@ async def randomize_all(ctx, n: int=2):
         member_list = member_list + "\n" + (f"I would have set {member.name} to {name}")
     await ctx.send(f'found {member_list}!')
 
-@bot.command(name="reloadnames", aliases=['rl'])
+@bot.command(name="reloadnames", aliases=['rl'], help="[reloadnames|rl]")
 async def reload_names(ctx):
     nick.load()
 
