@@ -1,18 +1,19 @@
 import os
-import discord
 import json
 import random
 import logging
+import discord
+
 from discord.ext import commands
 
 CLIENT_TOKEN = os.getenv('API_TOKEN')
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
-
 class NickNamer:
-    def __init__(self):
-        self.fn = "/tmp/data.json"
+    """A class to handle IO and other naming operations."""
+    def __init__(self, data_file: str="./data.json"):
+        self.fn = data_file
         self.names_list = []
         try:
             self.load()
@@ -21,48 +22,68 @@ class NickNamer:
             self.save()
 
     def rem(self, name):
+        """Remember a name."""
         self.names_list.append(name)
         self.save()
 
     def forget(self, name):
+        """Forget a name."""
         self.names_list.remove(name)
         self.save()
-    
-    def forgetAll(self):
+
+    def forget_all(self):
+        """Forget all names."""
         self.names_list = []
         self.save()
 
     def save(self):
+        """Write remembered names to disk."""
         with open(self.fn, 'w') as f:
             json.dump(self.names_list, f)
 
     def load(self):
+        """Load remembered names from disk."""
         if not os.path.exists(self.fn):
             f = open(self.fn, 'x')
             f.close()
         with open(self.fn, 'r') as f:
             self.names_list = json.load(f)
 
-    def nameList(self):
+    def name_list(self) -> list:
+        """Return a list of names that are remembered."""
         return self.names_list
 
-    def newName(self):
-        name_list = nick.nameList()
+    def new_name(self, n=2) -> str:
+        name_list = self.name_list()
         if not name_list:
-            return
-        name1 = name_list[random.randint(0, len(name_list) - 1)]
-        name2 = name_list[random.randint(0, len(name_list) - 1)]
-        while name1 == name2:
-            name2 = name_list[random.randint(0, len(name_list) - 1)]
-        return [name1, name2]
+            return []
+        if len(name_list) < n:
+            return []
+        name: str = ""
+        i: int = 0
+        while i != n:
+            new_name = name_list[random.randint(0, len(name_list) - 1)]
+            if not new_name in name:
+                i = i + 1
+                name = name + " " + new_name
+        return name
 
-nick = NickNamer()
+async def set_name(member: discord.Member, name: str) -> bool:
+    """Helper function to set the name of a member"""
+    try:
+        await member.edit(nick=name)
+        return True
+    except discord.errors.Forbidden as err:
+        print(f"{type(err).__name__} was raised: {err}")
+        return False
 
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
 bot = commands.Bot(command_prefix='?', intents=intents)
+
+nick = NickNamer()
 
 @bot.event
 async def on_ready():
@@ -80,72 +101,49 @@ async def forget(ctx, name):
     nick.forget(name)
     await ctx.send(f'Okay! I will forget {name}!')
 
-@bot.command()
+@bot.command(name="forgetall")
 # @commands.is_owner()
-async def forgetall(ctx):
-    nick.forgetAll()
-    await ctx.send(f'Okay!')
+async def forget_all(ctx):
+    nick.forget_all()
+    await ctx.send('Okay!')
 
 @bot.command(name="names")
-async def getnames(ctx):
-    if not nick.nameList():
-        await ctx.send(f'I remember... nothing')
+async def get_names(ctx):
+    if not nick.name_list():
+        await ctx.send('I remember... nothing')
         return
-    await ctx.send(f'I remember... {nick.nameList()}')
+    await ctx.send(f'I remember... {nick.name_list()}')
 
-@bot.command(aliases=['randme'])
-async def randomizeme(ctx):
-    names = nick.newName()
-    name1 = names[0]
-    name2 = names[1]
-    try:
-        await ctx.author.edit(nick=name1+" "+name2)
-    except discord.errors.Forbidden as err:
-        print(f"{type(err).__name__} was raised: {err}")
-        await ctx.send(f'Something happened! :(\n{err}')
-        return   
-    await ctx.send(f'I found {name1} {name2}!')
+@bot.command(name="randomizeme", aliases=['randme'])
+async def randomize_me(ctx, n=2):
+    name: str = nick.new_name(n)
+    await ctx.send(f"Okay! I'll call you {name}!")
+    r = await set_name(ctx.author, name)
+    if not r:
+        await ctx.send("Something happened :(")
+
 
 @bot.command(aliases=['rand'])
-async def randomize(ctx, member: discord.Member):
-    names = nick.newName()
-    name1 = names[0]
-    name2 = names[1]
-    try:
-        await member.edit(nick=name1+" "+name2)
-    except discord.errors.Forbidden as err:
-        print(f"{type(err).__name__} was raised: {err}")
-        await ctx.send(f'Something happened! :(\n{err}')
-        return   
-    await ctx.send(f'{member.mention} is now {name1} {name2}!')
+async def randomize(ctx, member: discord.Member, n=2):
+    name: str = nick.new_name(n)
+    await ctx.send(f"Okay! I'll call {member.nick} {name}!")
+    r = await set_name(member, name)
+    if not r:
+        await ctx.send("Something happened :(")
 
-@bot.command(aliases=['randall'])
-async def randomizeall(ctx):
-    name_list = nick.nameList()
-    if not name_list:
-        await ctx.send('I found nothing :(')
-        return
+@bot.command(name="randomizeall", aliases=['randall'])
+async def randomize_all(ctx, n: int=2):
     guild = ctx.guild
-    member_list = ""
+    member_list: str = ""
     for member in guild.members:
         if member.bot:
             continue
-        names = nick.newName()
-        name1 = names[0]
-        name2 = names[1]
-        member_list = member_list + "\n" + (f"I would have set {member.name} to {name1} {name2}")
+        name: str = nick.new_name(n)
+        member_list = member_list + "\n" + (f"I would have set {member.name} to {name}")
     await ctx.send(f'found {member_list}!')
 
-    # name1 = name_list[random.randint(0, len(name_list) - 1)]
-    # name2 = name_list[random.randint(0, len(name_list) - 1)]
-    # while name1 == name2:
-    #     name2 = name_list[random.randint(0, len(name_list) - 1)]
-    
-    # try:
-    #     await member.edit(nick=name1+" "+name2)
-    #     await ctx.send(f'I found {name1} {name2}!')
-    # except Exception as err: 
-    #     await ctx.send(f"I can't touch {member.mention} because {err=}  :(")
-    # except discord.ext.commands.errors.MemberNotFound as err:
-    #     await ctx.send(f"I can't touch {member.mention} because {err=}  :(")
+@bot.command(name="reloadnames", aliases=['rl'])
+async def reload_names(ctx):
+    nick.load()
+
 bot.run(CLIENT_TOKEN, log_handler=handler)
