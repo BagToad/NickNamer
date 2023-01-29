@@ -32,7 +32,7 @@ jobs:
           source venv/bin/activate
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: python3 -m pip install -U discord.py
         
       # Optional: Add step to run tests here
 
