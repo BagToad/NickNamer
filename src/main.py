@@ -140,7 +140,6 @@ async def randomize_all(ctx, n: int=2):
             continue
         name: str = nick.new_name(n)
         member_list = member_list + "\n" + (f"I would have set {member.name} to {name}")
-    await ctx.send(f'found {member_list}!')
 
 @bot.command(name="reloadnames", aliases=['rl'])
 async def reload_names(ctx):
