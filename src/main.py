@@ -59,6 +59,8 @@ class NickNamer:
             return []
         if len(name_list) < n:
             return []
+        if n < 1: 
+            return []
         name: str = ""
         i: int = 0
         while i != n:
