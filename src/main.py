@@ -143,8 +143,12 @@ async def randomize_all(ctx, n: int=2):
         if member.bot:
             continue
         name: str = nick.new_name(n)
-        member_list = member_list + "\n" + (f"I would have set {member.name} to {name}")
-    await ctx.send(f'found {member_list}!')
+        member_list = member_list + "\n" + (f"I'll call {member.name} {name}!")
+        r: bool = await set_name(member, name)
+        if not r:
+            await ctx.send("Something happened :(")
+            return
+    await ctx.send(f"Okay, I'm doing it!\n{member_list}")
 
 @bot.command(name="reloadnames", aliases=['rl'], help="[reloadnames|rl] - Re-read data from disk.")
 async def reload_names(ctx):
