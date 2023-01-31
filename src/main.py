@@ -49,6 +49,7 @@ class NickNamer:
         if not os.path.exists(self.fn):
             f = open(self.fn, 'x')
             f.close()
+            return
         with open(self.fn, 'r') as f:
             self.names_list = json.load(f)
 
