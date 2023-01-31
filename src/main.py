@@ -137,7 +137,7 @@ async def randomize_me(ctx, n=2):
 @bot.command(name="randomize", aliases=['rand'], help="[randomize|rand] user num_of_words - Randomize someone's nickname")
 async def randomize(ctx, member: discord.Member, n=2):
     name: str = nick.new_name(n)
-    await ctx.send(f"Okay! I'll call {member.nick} {name}!")
+    await ctx.send(f"Okay! I'll call {member.name} {name}!")
     r = await set_name(member, name)
     if not r:
         await ctx.send("Something happened :(")
