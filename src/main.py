@@ -129,7 +129,7 @@ async def get_names(ctx):
 @bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words - Randomize your nickname.")
 async def randomize_me(ctx, n=2):
     name: str = nick.new_name(n)
-    await ctx.send(f"Okay! I'll call you {name}!")
+    await ctx.send(f"Okay! I'll call {ctx.author.name} {name}!")
     r = await set_name(ctx.author, name)
     if not r:
         await ctx.send("Something happened :(")
