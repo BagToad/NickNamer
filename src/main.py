@@ -21,10 +21,13 @@ class NickNamer:
             self.names_list = []
             self.save()
 
-    def rem(self, name):
+    def remember(self, name) -> bool:
         """Remember a name."""
+        if name.lower() in self.names_list:
+            return False
         self.names_list.append(name)
         self.save()
+        return True
 
     def forget(self, name):
         """Forget a name."""
@@ -94,10 +97,14 @@ async def on_ready():
 @bot.command(name="remember", aliases=['rem'], help="[remember|rem] word_to_remember - Remember a word.")
 # @commands.is_owner()
 async def remember(ctx, *name: str):
+    err: list = []
     for w in name:
-        nick.rem(w)
+        if not nick.remember(w):
+            err.append(w)
     s = ' '
     await ctx.send(f'Okay! I will remember {s.join(name)}!')
+    if err:
+        await ctx.send(f'I could not remember {s.join(err)}')
 
 @bot.command(name="forget", help="[forget] word_to_forget - Forget a word.")
 # @commands.is_owner()
