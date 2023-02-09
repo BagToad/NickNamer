@@ -150,7 +150,7 @@ async def randomize_all(ctx, n: int=2):
     for member in guild.members:
         if member.bot:
             continue
-        if member.id == guild.owner.id:
+        if member == guild.owner:
             continue
         name: str = nick.new_name(n)
         member_list = member_list + "\n" + (f"I'll call {member.name} {name}!")
