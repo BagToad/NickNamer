@@ -156,7 +156,7 @@ async def randomize_all(ctx, n: int=2):
         member_list = member_list + "\n" + (f"I'll call {member.name} {name}!")
         r: bool = await set_name(member, name)
         if not r:
-            await ctx.send("Something happened :(")
+            await ctx.send(f"Something happened processing - {member.name} :(")
             return
     await ctx.send(f"Okay, I'm doing it!\n{member_list}")
 
