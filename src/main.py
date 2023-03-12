@@ -164,7 +164,7 @@ async def randomize_all(ctx, n: int=2):
 async def flip(ctx):
     words = ctx.author.name.split()
     reversed_words = words[::-1]
-    r = await set_name(ctx.author, reversed_words)
+    r = await set_name(ctx.author, ' '.join(reversed_words))
     if not r:
         await ctx.send("Something happened :(")
 
