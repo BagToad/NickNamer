@@ -161,10 +161,12 @@ async def randomize_all(ctx, n: int=2):
     await ctx.send(f"Okay, I'm doing it!\n{member_list}")
 
 @bot.command(name="flip", help="[flip]")
-async def flip(ctx, member: discord.Member=ctx.author):
+async def flip(ctx, member: discord.Member=""):
+    if not member:
+        member = ctx.author
     words = member.nick.split()
     reversed_words = words[::-1]
-    r = await set_name(ctx.author, ' '.join(reversed_words))
+    r = await set_name(member, ' '.join(reversed_words))
     if not r:
         await ctx.send("Something happened :(")
 
