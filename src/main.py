@@ -160,6 +160,14 @@ async def randomize_all(ctx, n: int=2):
             return
     await ctx.send(f"Okay, I'm doing it!\n{member_list}")
 
+@bot.command(name="flip", help="[flip]")
+async def flip(ctx):
+    words = ctx.author.name.split()
+    reversed_words = words[::-1]
+    r = await set_name(ctx.author, reversed_words)
+    if not r:
+        await ctx.send("Something happened :(")
+
 @bot.command(name="reloadnames", aliases=['rl'], help="[reloadnames|rl] - Re-read data from disk.")
 async def reload_names(ctx):
     nick.load()
