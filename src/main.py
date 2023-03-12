@@ -162,7 +162,7 @@ async def randomize_all(ctx, n: int=2):
 
 @bot.command(name="flip", help="[flip]")
 async def flip(ctx):
-    words = ctx.author.name.split()
+    words = ctx.author.nick.split()
     reversed_words = words[::-1]
     r = await set_name(ctx.author, ' '.join(reversed_words))
     if not r:
