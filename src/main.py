@@ -184,7 +184,7 @@ async def randomize_me(ctx, n=2):
         await ctx.send("Sorry, you do not have the " + nick.get_role_name(str(ctx.guild.id)) + " role... Get a job...")
         return
     name: str = nick.new_name(str(ctx.guild.id), n)
-    await ctx.send(f"We will all call {member.name} _{name}_!")
+    await ctx.send(f"We will all call {ctx.author.name} _{name}_!")
     r = await set_name(ctx.author, name)
     if not r:
         await ctx.send("Something happened :(")
