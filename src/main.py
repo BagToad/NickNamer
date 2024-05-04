@@ -74,6 +74,16 @@ class NickNamer:
             return []
         return self.names_dict[server_id]["words"]
 
+    def has_names(self, server_id) -> bool:
+        """Check if there are any names remembered for a specific server."""
+        if server_id not in self.names_dict:
+            return False
+        if "words" not in self.names_dict[server_id]:
+            return False
+        if not self.names_dict[server_id]["words"]:
+            return False
+        return bool(self.names_dict[server_id]["words"])
+
     def new_name(self, server_id, n=2) -> str:
         name_list = self.name_list(server_id)
         if not name_list:
@@ -118,14 +128,18 @@ async def on_ready():
 
 @bot.command(name="remember", aliases=['rem'], help="[remember|rem] word_to_remember - Remember a word.")
 async def remember(ctx, *name: str):
+    if not name:
+        await ctx.send('You must provide a word to remember...')
+        return
     err: list = []
     for w in name:
         if not nick.remember(w, str(ctx.guild.id)):
             err.append(w)
     s = ' '
-    await ctx.send(f'Okay! I will remember {s.join(name)}!')
     if err:
-        await ctx.send(f'I could not remember {s.join(err)}')
+        await ctx.send(f'\nI tried my best, but I could not remember _{s.join(err)}_... 🤔\n\nProbably because IT\'S ALREADY THERE. You would know that if you read the word list 🙄\nNext time open your eyes :blush:')
+        return
+    await ctx.send(f'Okay! I will remember {s.join(name)}!')
 
 @bot.command(name="rolename", help="[rolename] role_name - Set the role required")
 async def role_name(ctx, role_name: str = None):
@@ -141,14 +155,17 @@ async def role_name(ctx, role_name: str = None):
     await ctx.send(f'Okay! I will now require the role {role_name} to change names.')
 
 @bot.command(name="forget", help="[forget] word_to_forget - Forget a word.")
-async def forget(ctx, name: str):
+async def forget(ctx, name: str = None):
+    if not name:
+        await ctx.send('You must provide a word to forget... 🙄')
+        return
     nick.forget(name, str(ctx.guild.id))
-    await ctx.send(f'Okay! I will forget {name}!')
+    await ctx.send(f'Okay! I will try to forget {name}!')
 
 @bot.command(name="forgetall", help="[forgetall] - Forget all names.")
 async def forget_all(ctx):
     nick.forget_all(str(ctx.guild.id))
-    await ctx.send('Okay!')
+    await ctx.send('Okay! Now I\'m useless 🙃')
 
 @bot.command(name="names", aliases=["words", "n"], help="[names|words|n] - List all words remembered.")
 async def get_names(ctx):
@@ -160,6 +177,9 @@ async def get_names(ctx):
 
 @bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words - Randomize your nickname.")
 async def randomize_me(ctx, n=2):
+    if not nick.has_names(str(ctx.guild.id)):
+        await ctx.send("I don't remember any words... 🤔\n\nThat's the whole point of this...")
+        return
     if not has_role(ctx.author, nick.get_role_name(str(ctx.guild.id))):
         await ctx.send("Sorry, you do not have the " + nick.get_role_name(str(ctx.guild.id)) + " role... Get a job...")
         return
@@ -171,6 +191,9 @@ async def randomize_me(ctx, n=2):
 
 @bot.command(name="randomize", aliases=['rand'], help="[randomize|rand] user num_of_words - Randomize someone's nickname")
 async def randomize(ctx, member: discord.Member, n=2):
+    if not nick.has_names(str(ctx.guild.id)):
+        await ctx.send("I don't remember any words... 🤔\n\nThat's the whole point of this...")
+        return
     if not has_role(member, nick.get_role_name(str(ctx.guild.id))):
         await ctx.send("Sorry, " + member.name + " doesn't have the " + nick.get_role_name(str(ctx.guild.id)) + " role.")
         return
@@ -182,6 +205,9 @@ async def randomize(ctx, member: discord.Member, n=2):
 
 @bot.command(name="randomizeall", aliases=['randall'], help="[randomizeall|randall] num_of_words - Randomize everyone's nickname.")
 async def randomize_all(ctx, n: int=2):
+    if not nick.has_names(str(ctx.guild.id)):
+        await ctx.send("I don't remember any words... 🤔\n\nThat's the whole point of this...")
+        return
     guild = ctx.guild
     member_list: str = ""
     for member in guild.members:
@@ -192,12 +218,12 @@ async def randomize_all(ctx, n: int=2):
         if member.id == guild.owner.id:
             continue
         name: str = nick.new_name(str(guild.id), n)
-        member_list = member_list + "\n" + (f"We will all call {member.name} _{name}_!")
+        member_list = member_list + "\n" + (f"{member.name} ---> _{name}_!")
         r: bool = await set_name(member, name)
         if not r:
             await ctx.send(f"Something happened processing - {member.name} :(")
             return
-    await ctx.send(f"Okay, it's a party!\n{member_list}")
+    await ctx.send(f"Okay, it's a party! :tada::tada:\n{member_list}")
 
 @bot.command(name="flip", help="[flip]")
 async def flip(ctx, member: discord.Member=""):
