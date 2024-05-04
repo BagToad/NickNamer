@@ -153,10 +153,10 @@ async def forget_all(ctx):
 @bot.command(name="names", aliases=["words", "n"], help="[names|words|n] - List all words remembered.")
 async def get_names(ctx):
     if not nick.name_list(str(ctx.guild.id)):
-        await ctx.send('I remember... nothing :(')
+        await ctx.send('🤔 I remember... nothing :(')
         return
     s :str = " "
-    await ctx.send(f'I remember... {", ".join(nick.name_list(str(ctx.guild.id)))}')
+    await ctx.send(f'🤔 I remember... \n\n```{" ".join(nick.name_list(str(ctx.guild.id)))}```')
 
 @bot.command(name="randomizeme", aliases=['randme'], help="[randomizeme|randme] num_of_words - Randomize your nickname.")
 async def randomize_me(ctx, n=2):
@@ -164,7 +164,7 @@ async def randomize_me(ctx, n=2):
         await ctx.send("Sorry, you do not have the " + nick.get_role_name(str(ctx.guild.id)) + " role... Get a job...")
         return
     name: str = nick.new_name(str(ctx.guild.id), n)
-    await ctx.send(f"Okay! I'll call {ctx.author.name} {name}!")
+    await ctx.send(f"We will all call {member.name} _{name}_!")
     r = await set_name(ctx.author, name)
     if not r:
         await ctx.send("Something happened :(")
@@ -175,7 +175,7 @@ async def randomize(ctx, member: discord.Member, n=2):
         await ctx.send("Sorry, " + member.name + " doesn't have the " + nick.get_role_name(str(ctx.guild.id)) + " role.")
         return
     name: str = nick.new_name(str(ctx.guild.id), n)
-    await ctx.send(f"Okay! I'll call {member.name} {name}!")
+    await ctx.send(f"We will all call {member.name} _{name}_!")
     r = await set_name(member, name)
     if not r:
         await ctx.send("Something happened :(")
@@ -192,12 +192,12 @@ async def randomize_all(ctx, n: int=2):
         if member.id == guild.owner.id:
             continue
         name: str = nick.new_name(str(guild.id), n)
-        member_list = member_list + "\n" + (f"I'll call {member.name} {name}!")
+        member_list = member_list + "\n" + (f"We will all call {member.name} _{name}_!")
         r: bool = await set_name(member, name)
         if not r:
             await ctx.send(f"Something happened processing - {member.name} :(")
             return
-    await ctx.send(f"Okay, I'm doing it!\n{member_list}")
+    await ctx.send(f"Okay, it's a party!\n{member_list}")
 
 @bot.command(name="flip", help="[flip]")
 async def flip(ctx, member: discord.Member=""):
@@ -208,9 +208,12 @@ async def flip(ctx, member: discord.Member=""):
         return
     words = member.nick.split()
     reversed_words = words[::-1]
-    r = await set_name(member, ' '.join(reversed_words))
+    old_nick = member.nick
+    new_nick = ' '.join(reversed_words)
+    r = await set_name(member, new_nick)
     if not r:
         await ctx.send("Something happened :(")
+    await ctx.send(f"Okay! I flipped {member.name} from _{old_nick}_ to _{new_nick}_!")
 
 @bot.command(name="reloadnames", aliases=['rl'], help="[reloadnames|rl] - Re-read data from disk.")
 async def reload_names(ctx):
