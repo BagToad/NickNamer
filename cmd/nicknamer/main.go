@@ -14,7 +14,6 @@ func main() {
 	if err != nil {
 		logger := log.New(os.Stderr)
 		logger.Fatal("Failed to load configuration:", err)
-		return
 	}
 
 	nickBot, err := bot.New(cfg)

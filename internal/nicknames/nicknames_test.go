@@ -1,13 +1,12 @@
 package nicknames
 
 import (
-	"os"
+	"path/filepath"
 	"testing"
 )
 
 func TestRememberAndForget(t *testing.T) {
-	tmpFile := "/tmp/test_nicknames.json"
-	defer os.Remove(tmpFile)
+	tmpFile := filepath.Join(t.TempDir(), "test_nicknames.json")
 
 	m, err := NewManager(tmpFile)
 	if err != nil {
@@ -44,8 +43,7 @@ func TestRememberAndForget(t *testing.T) {
 }
 
 func TestForgetAll(t *testing.T) {
-	tmpFile := "/tmp/test_nicknames_all.json"
-	defer os.Remove(tmpFile)
+	tmpFile := filepath.Join(t.TempDir(), "test_nicknames_all.json")
 
 	m, err := NewManager(tmpFile)
 	if err != nil {
@@ -66,8 +64,7 @@ func TestForgetAll(t *testing.T) {
 }
 
 func TestGenerateName(t *testing.T) {
-	tmpFile := "/tmp/test_nicknames_gen.json"
-	defer os.Remove(tmpFile)
+	tmpFile := filepath.Join(t.TempDir(), "test_nicknames_gen.json")
 
 	m, err := NewManager(tmpFile)
 	if err != nil {
@@ -95,8 +92,7 @@ func TestGenerateName(t *testing.T) {
 }
 
 func TestRoleName(t *testing.T) {
-	tmpFile := "/tmp/test_nicknames_role.json"
-	defer os.Remove(tmpFile)
+	tmpFile := filepath.Join(t.TempDir(), "test_nicknames_role.json")
 
 	m, err := NewManager(tmpFile)
 	if err != nil {
@@ -116,8 +112,7 @@ func TestRoleName(t *testing.T) {
 }
 
 func TestPersistence(t *testing.T) {
-	tmpFile := "/tmp/test_nicknames_persist.json"
-	defer os.Remove(tmpFile)
+	tmpFile := filepath.Join(t.TempDir(), "test_nicknames_persist.json")
 
 	guildID := "test-guild-persist"
 

@@ -2,6 +2,7 @@ package nicknames
 
 import (
 	"encoding/json"
+	"log"
 	"math/rand"
 	"os"
 	"strings"
@@ -10,8 +11,8 @@ import (
 
 // GuildData holds the words and role configuration for a single guild.
 type GuildData struct {
-	Words   []string `json:"words"`
-	Role    string   `json:"NICKNAMER_ROLE"`
+	Words []string `json:"words"`
+	Role  string   `json:"NICKNAMER_ROLE"`
 }
 
 // Manager handles nickname word storage and generation.
@@ -59,7 +60,9 @@ func (m *Manager) Remember(word, guildID string) bool {
 		}
 	}
 	m.data[guildID].Words = append(m.data[guildID].Words, word)
-	m.Save()
+	if err := m.Save(); err != nil {
+		log.Printf("failed to save data: %v", err)
+	}
 	return true
 }
 
@@ -75,7 +78,9 @@ func (m *Manager) Forget(word, guildID string) {
 	for i, w := range words {
 		if w == word {
 			m.data[guildID].Words = append(words[:i], words[i+1:]...)
-			m.Save()
+			if err := m.Save(); err != nil {
+				log.Printf("failed to save data: %v", err)
+			}
 			return
 		}
 	}
@@ -90,7 +95,9 @@ func (m *Manager) ForgetAll(guildID string) {
 		return
 	}
 	m.data[guildID].Words = []string{}
-	m.Save()
+	if err := m.Save(); err != nil {
+		log.Printf("failed to save data: %v", err)
+	}
 }
 
 // GetWords returns the list of words for a guild.
@@ -134,7 +141,9 @@ func (m *Manager) SetRoleName(roleName, guildID string) {
 
 	m.ensureGuild(guildID)
 	m.data[guildID].Role = roleName
-	m.Save()
+	if err := m.Save(); err != nil {
+		log.Printf("failed to save data: %v", err)
+	}
 }
 
 // GenerateName creates a random nickname using n words from the pool.

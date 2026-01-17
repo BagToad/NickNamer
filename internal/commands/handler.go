@@ -188,10 +188,13 @@ func (h *Handler) HandleInteraction(s *discordgo.Session, i *discordgo.Interacti
 }
 
 func (h *Handler) respond(s *discordgo.Session, i *discordgo.InteractionCreate, msg string) {
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{Content: msg},
 	})
+	if err != nil {
+		h.config.Logger.Error("failed to respond to interaction", "error", err)
+	}
 }
 
 func (h *Handler) handleRemember(s *discordgo.Session, i *discordgo.InteractionCreate, guildID string, opts []*discordgo.ApplicationCommandInteractionDataOption) {
@@ -401,7 +404,18 @@ func (h *Handler) handleRoleName(s *discordgo.Session, i *discordgo.InteractionC
 		return
 	}
 
-	perms := i.Member.Permissions
+	member, err := s.GuildMember(guildID, i.Member.User.ID)
+	if err != nil {
+		h.respond(s, i, "Could not verify your permissions.")
+		return
+	}
+
+	perms, err := s.UserChannelPermissions(member.User.ID, i.ChannelID)
+	if err != nil {
+		h.respond(s, i, "Could not verify your permissions.")
+		return
+	}
+
 	if perms&discordgo.PermissionAdministrator == 0 {
 		h.respond(s, i, "You must be an administrator to change the role name.")
 		return
